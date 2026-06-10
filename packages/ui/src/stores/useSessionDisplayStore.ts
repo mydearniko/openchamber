@@ -19,7 +19,7 @@ export const useSessionDisplayStore = create<SessionDisplayStore>()(
     (set) => ({
       displayMode: 'default',
       showRecentSection: true,
-      showArchivedSessions: true,
+      showArchivedSessions: false,
       setDisplayMode: (mode) => set({ displayMode: mode }),
       setShowRecentSection: (show) => set({ showRecentSection: show }),
       setShowArchivedSessions: (show) => set({ showArchivedSessions: show }),
@@ -28,6 +28,19 @@ export const useSessionDisplayStore = create<SessionDisplayStore>()(
     }),
     {
       name: 'session-display-mode',
+      version: 1,
+      migrate: (persistedState, version) => {
+        if (!persistedState || typeof persistedState !== 'object') {
+          return persistedState;
+        }
+
+        const state = persistedState as Record<string, unknown>;
+        if (version < 1) {
+          state.showArchivedSessions = false;
+        }
+
+        return state;
+      },
     },
   ),
 );
